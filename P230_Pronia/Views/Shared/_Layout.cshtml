@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@inject P230_Pronia.Services.LayoutService layoutService
+<!DOCTYPE html>
 <html lang="zxx">
 <head>
     <meta charset="UTF-8" />
@@ -97,11 +98,11 @@
                             <div class="header-middle-wrap position-relative">
                                 <div class="header-contact d-none d-lg-flex">
                                     <i class="pe-7s-call"></i>
-                                    <a href="tel://+00-123-456-789">+00 123 456 789</a>
+                                    <a href="tel://@layoutService.GetSettings().FirstOrDefault(s=>s.Key == "PhoneNumber").Value">@layoutService.GetSettings().FirstOrDefault(s=>s.Key == "PhoneNumber").Value</a>
                                 </div>
 
                                 <a href="index.html" class="header-logo">
-                                    <img src="~/assets/images/logo/dark.png" alt="Header Logo" />
+                                    <img src="~/assets/images/logo/@layoutService.GetSettings().FirstOrDefault(s=>s.Key == "Logo").Value" alt="Header Logo" />
                                 </a>
 
                                 <div class="header-right">
@@ -111,7 +112,7 @@
                                                class="search-btn bt"
                                                data-bs-toggle="modal"
                                                data-bs-target="#exampleModal">
-                                                <i class="pe-7s-search"></i>
+                                                @Html.Raw(layoutService.GetSettings().FirstOrDefault(s=>s.Key == "SearchIcon").Value)
                                             </a>
                                         </li>
                                         <li class="dropdown d-none d-lg-block">
@@ -121,7 +122,7 @@
                                                     data-bs-toggle="dropdown"
                                                     aria-label="setting"
                                                     aria-expanded="false">
-                                                <i class="pe-7s-users"></i>
+                                                @Html.Raw(layoutService.GetSettings().FirstOrDefault(s=>s.Key == "AccountIcon").Value)
                                             </button>
                                             <ul class="dropdown-menu"
                                                 aria-labelledby="settingButton">
@@ -140,14 +141,14 @@
                                         </li>
                                         <li class="minicart-wrap me-3 me-lg-0">
                                             <a href="#miniCart" class="minicart-btn toolbar-btn">
-                                                <i class="pe-7s-shopbag"></i>
+                                                @Html.Raw(layoutService.GetSettings().FirstOrDefault(s=>s.Key == "BasketIcon").Value)
                                                 <span class="quantity">3</span>
                                             </a>
                                         </li>
                                         <li class="mobile-menu_wrap d-block d-lg-none">
                                             <a href="#mobileMenu"
                                                class="mobile-menu_btn toolbar-btn pl-0">
-                                                <i class="pe-7s-menu"></i>
+                                                @Html.Raw(layoutService.GetSettings().FirstOrDefault(s=>s.Key == "BasketIcon").Value)
                                             </a>
                                         </li>
                                     </ul>

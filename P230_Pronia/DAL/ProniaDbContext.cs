@@ -15,6 +15,16 @@ namespace P230_Pronia.DAL
         public DbSet<Tag> Tags { get; set; }
         public DbSet<PlantDeliveryInformation> PlantDeliveryInformation { get; set; }
         public DbSet<PlantImage> PlantImages { get; set; }
+        public DbSet<Setting> Settings { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Setting>()
+                .HasIndex(s => s.Key)
+                .IsUnique();
+            base.OnModelCreating(modelBuilder);
+        }
+
 
     }
 }
