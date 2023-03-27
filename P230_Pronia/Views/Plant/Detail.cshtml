@@ -1,7 +1,7 @@
 ﻿@model Plant
 @{
     ViewData["Title"] = "Detail";
-    List<Plant> related = ViewBag.RelatedPlant;
+    List<Plant> relateds = ViewBag.Relateds;
 }
 
 <main class="main-content">
@@ -456,8 +456,7 @@
                     <div class="swiper-container product-slider">
                         <div class="swiper-wrapper">
                             @*<partial name="_PlantPartial" >*@
-                            @await Html.PartialAsync("_PlantPartial",related)
-                            
+                            @await Html.PartialAsync("_PlantPartial",relateds)
                         </div>
                     </div>
                 </div>

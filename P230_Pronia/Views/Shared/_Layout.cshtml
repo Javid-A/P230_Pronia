@@ -142,7 +142,7 @@
                                         <li class="minicart-wrap me-3 me-lg-0">
                                             <a href="#miniCart" class="minicart-btn toolbar-btn">
                                                 @Html.Raw(layoutService.GetSettings().FirstOrDefault(s=>s.Key == "BasketIcon").Value)
-                                                <span class="quantity">3</span>
+                                                <span class="quantity">@(layoutService.GetBasket() is null ? "0":layoutService.GetBasket().CookieBasketItemVMs.Count)</span>
                                             </a>
                                         </li>
                                         <li class="mobile-menu_wrap d-block d-lg-none">

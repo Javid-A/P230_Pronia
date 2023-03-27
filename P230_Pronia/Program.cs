@@ -1,17 +1,22 @@
 using Microsoft.EntityFrameworkCore;
 using P230_Pronia.DAL;
 using P230_Pronia.Services;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+
+builder.Services.AddControllersWithViews().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+});
 builder.Services.AddDbContext<ProniaDbContext>(opt =>
 {
     opt.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
 });
-
 builder.Services.AddScoped<LayoutService>();
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
