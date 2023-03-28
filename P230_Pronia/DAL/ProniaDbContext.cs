@@ -22,6 +22,7 @@ namespace P230_Pronia.DAL
             modelBuilder.Entity<Setting>()
                 .HasIndex(s => s.Key)
                 .IsUnique();
+            modelBuilder.Entity<Category>().HasIndex(c => c.Name).IsUnique();
             base.OnModelCreating(modelBuilder);
         }
 
