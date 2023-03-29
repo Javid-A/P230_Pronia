@@ -1,4 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using P230_Pronia.DAL;
 using P230_Pronia.Entities;
 using P230_Pronia.Migrations;
@@ -32,12 +35,24 @@ namespace P230_Pronia.Areas.ProniaAdmin.Controllers
         {
             if (!ModelState.IsValid)
             {
-                ModelState.AddModelError("Name","You cannot duplicate category name");
+                foreach (string message in ModelState.Values.SelectMany(v => v.Errors)
+                                    .Select(e => e.ErrorMessage))
+                {
+                    ModelState.AddModelError("", message);
+                }
+               
                 return View();
             }
-            _context.Categories.Add(newCategory);
-            _context.SaveChanges();
-            Console.WriteLine("Hello World");
+            bool isDuplicated = _context.Categories.Any(c => c.Name == newCategory.Name);
+            if (isDuplicated)
+            {
+                ModelState.AddModelError("", "You cannot duplicate value");
+                return View();
+            }          
+                _context.Categories.Add(newCategory);
+                _context.SaveChanges();
+        
+         
             return RedirectToAction(nameof(Index));
         }
 
@@ -56,11 +71,11 @@ namespace P230_Pronia.Areas.ProniaAdmin.Controllers
             if (id != edited.Id) return BadRequest();
             Category category = _context.Categories.FirstOrDefault(c => c.Id == id);
             if (category is null) return NotFound();
-            bool duplicate = _context.Categories.Any(c => c.Name == edited.Name);
-            if(duplicate)
+            bool duplicate = _context.Categories.Any(c => c.Name == edited.Name && edited.Name != category.Name);//test == albert 
+            if (duplicate)
             {
-                ModelState.AddModelError("","You cannot duplicate category name");
-                return View();
+                ModelState.AddModelError("", "You cannot duplicate category name");
+                return View(category);
             }
             category.Name = edited.Name;
             _context.SaveChanges();

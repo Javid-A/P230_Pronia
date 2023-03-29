@@ -3,11 +3,11 @@ using P230_Pronia.Entities;
 
 namespace P230_Pronia.DAL
 {
-    public class ProniaDbContext:DbContext
+    public class ProniaDbContext : DbContext
     {
-        public ProniaDbContext(DbContextOptions<ProniaDbContext> options):base(options)
+        public ProniaDbContext(DbContextOptions<ProniaDbContext> options) : base(options)
         {
-            
+
         }
         public DbSet<Slider> Sliders { get; set; }
         public DbSet<Category> Categories { get; set; }

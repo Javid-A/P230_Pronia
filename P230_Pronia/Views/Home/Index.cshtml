@@ -41,7 +41,7 @@
                         <div class="scene fill">
                           <div class="expand-width" data-depth="0.2">
                             <img
-                              src="~/assets/images/website-images//1-1-524x617.png"
+                              src="~/assets/images/website-images/@slider.ImagePath"
                               alt="Inner Image"
                             />
                           </div>
@@ -58,8 +58,8 @@
           <div class="swiper-pagination d-md-none"></div>
 
           <!-- Add Arrows -->
-        @Html.Raw(Model.LastOrDefault()?.LeftIcon)
-        @Html.Raw(Model.LastOrDefault()?.RightIcon)
+        @Html.Raw(Model.FirstOrDefault()?.LeftIcon)
+        @Html.Raw(Model.FirstOrDefault()?.RightIcon)
 @*          <div class="swiper-button-prev"></div>
           <div class="swiper-button-next"></div>*@
         </div>
