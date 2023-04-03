@@ -126,12 +126,24 @@
                                             </button>
                                             <ul class="dropdown-menu"
                                                 aria-labelledby="settingButton">
-                                                <li>
-                                                    <a class="dropdown-item" href="my-account.html">My account</a>
-                                                </li>
-                                                <li>
-                                                    <a class="dropdown-item" href="login-register.html">Login | Register</a>
-                                                </li>
+                                                @if (User.Identity.IsAuthenticated)
+                                                {
+                                                    <li><span class="dropdown-item">@User.Identity.Name</span></li>
+                                                    <li>
+                                                        <a class="dropdown-item" asp-controller="Account" asp-action="ShowAuthenticated">My account</a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="dropdown-item" asp-controller="Account" asp-action="LogOut">Log out</a>
+                                                    </li>
+                                                }else{
+                                                    <li>
+                                                        <a class="dropdown-item" asp-controller="Account" asp-action="Login">Login</a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="dropdown-item" asp-controller="Account" asp-action="Register">Register</a>
+                                                    </li>
+                                                }
+                                                
                                             </ul>
                                         </li>
                                         <li class="d-none d-lg-block">
@@ -142,7 +154,7 @@
                                         <li class="minicart-wrap me-3 me-lg-0">
                                             <a href="#miniCart" class="minicart-btn toolbar-btn">
                                                 @Html.Raw(layoutService.GetSettings().FirstOrDefault(s=>s.Key == "BasketIcon").Value)
-                                                <span class="quantity">@(layoutService.GetBasket() is null ? "0":layoutService.GetBasket().CookieBasketItemVMs.Count)</span>
+                                                <span class="quantity">@(layoutService.GetBasket() is null ? "0" : layoutService.GetBasket().CookieBasketItemVMs.Count)</span>
                                             </a>
                                         </li>
                                         <li class="mobile-menu_wrap d-block d-lg-none">
@@ -1095,7 +1107,7 @@
     <script src="~/assets/js/plugins/ion.rangeSlider.min.js"></script>
     <script src="~/assets/js/plugins/mailchimp-ajax.js"></script>
     <script src="~/assets/js/plugins/jquery.counterup.js"></script>
-
+    @RenderSection("Scripts",false)
     <!--Main JS (Common Activation Codes)-->
     <script src="~/assets/js/main.js"></script>
 </body>

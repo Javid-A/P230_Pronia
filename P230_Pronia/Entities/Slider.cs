@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using Microsoft.Build.Framework;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace P230_Pronia.Entities
 {
@@ -12,6 +13,9 @@ namespace P230_Pronia.Entities
         public string LeftIcon { get; set; }
         public string RightIcon { get; set; }
         [NotMapped]
-        public IFormFile Image { get; set; }
+        public IFormFile? Image { get; set; }
+
+       
+
     }
 }

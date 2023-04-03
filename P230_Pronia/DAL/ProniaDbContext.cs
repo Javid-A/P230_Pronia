@@ -1,9 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using P230_Pronia.Entities;
+using P230_Pronia.ViewModels;
 
 namespace P230_Pronia.DAL
 {
-    public class ProniaDbContext : DbContext
+    public class ProniaDbContext : IdentityDbContext<User>
     {
         public ProniaDbContext(DbContextOptions<ProniaDbContext> options) : base(options)
         {
@@ -25,6 +27,8 @@ namespace P230_Pronia.DAL
             modelBuilder.Entity<Category>().HasIndex(c => c.Name).IsUnique();
             base.OnModelCreating(modelBuilder);
         }
+
+        public DbSet<P230_Pronia.ViewModels.PlantVM>? PlantVM { get; set; }
 
 
     }

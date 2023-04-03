@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using P230_Pronia.DAL;
+using P230_Pronia.Entities;
 using P230_Pronia.Services;
 using System.Text.Json.Serialization;
 
@@ -18,6 +20,22 @@ builder.Services.AddDbContext<ProniaDbContext>(opt =>
 builder.Services.AddScoped<LayoutService>();
 builder.Services.AddHttpContextAccessor();
 
+builder.Services.AddIdentity<User, IdentityRole>(opt =>
+{
+    opt.Password.RequiredUniqueChars = 3;
+    opt.Password.RequireNonAlphanumeric = false;
+    opt.Password.RequiredLength = 6;
+    opt.Password.RequireDigit = true;
+    opt.Password.RequireLowercase = true;
+    opt.Password.RequireUppercase = false;
+
+    opt.User.RequireUniqueEmail = false;
+    opt.User.AllowedUserNameCharacters = "qwertyuiopasdfghjklzxcvbnm";
+
+    opt.Lockout.MaxFailedAccessAttempts = 5;
+    opt.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+}).AddDefaultTokenProviders().AddEntityFrameworkStores<ProniaDbContext>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -33,6 +51,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseEndpoints(endpoints =>
