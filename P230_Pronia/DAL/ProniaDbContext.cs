@@ -28,7 +28,6 @@ namespace P230_Pronia.DAL
             base.OnModelCreating(modelBuilder);
         }
 
-        public DbSet<P230_Pronia.ViewModels.PlantVM>? PlantVM { get; set; }
 
 
     }

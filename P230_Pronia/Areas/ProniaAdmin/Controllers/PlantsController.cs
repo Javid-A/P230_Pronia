@@ -111,5 +111,58 @@ namespace P230_Pronia.Areas.ProniaAdmin.Controllers
             _context.SaveChanges();
             return RedirectToAction("Index", "Plants");
         }
+
+
+        public IActionResult Edit(int id)
+        {
+            if (id == 0) return BadRequest();
+            PlantVM? model = _context.Plants.Include(p => p.PlantCategories)
+                                            .Include(p => p.PlantTags)
+                                            .Include(p => p.PlantImages)
+                                    .Select(p =>
+                                    new PlantVM
+                                    {
+                                        Id = p.Id,
+                                        Name = p.Name,
+                                        SKU = p.SKU,
+                                        Desc = p.Desc,
+                                        Price = p.Price,
+                                        DiscountPrice = p.Price,
+                                        PlantDeliveryInformationId = p.PlantDeliveryInformationId,
+                                        CategoryIds = p.PlantCategories.Select(pc => pc.CategoryId).ToList(),
+                                        TagIds = p.PlantTags.Select(pc => pc.TagId).ToList(),
+                                        SpecificImages = p.PlantImages.Select(p => new PlantImage 
+                                        { 
+                                            Id = p.Id,
+                                            Path = p.Path,
+                                            IsMain = p.IsMain
+                                        }).ToList()
+                                    })
+                                    .FirstOrDefault(p => p.Id == id);
+
+            ViewBag.Informations = _context.PlantDeliveryInformation.AsEnumerable();
+            ViewBag.Categories = _context.Categories.AsEnumerable();
+            ViewBag.Tags = _context.Tags.AsEnumerable();
+            if (model is null) return BadRequest();
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(int id, PlantVM edited)
+        {
+            Plant? plant = await _context.Plants.Include(p => p.PlantImages).FirstOrDefaultAsync(p => p.Id == id);
+            if (plant is null) return BadRequest();
+            IEnumerable<string> removables = plant.PlantImages.Where(p => !edited.ImageIds.Contains(p.Id)).Select(i => i.Path).AsEnumerable();
+            string imageFolderPath = Path.Combine(_env.WebRootPath, "assets", "images");
+            foreach (string removable in removables)
+            {
+                string path = Path.Combine(imageFolderPath, "website-images", removable);
+                await Console.Out.WriteLineAsync(path);
+                Console.WriteLine(FileUpload.DeleteImage(path));
+            }
+            return Json(removables);
+            plant.PlantImages.RemoveAll(p => !edited.ImageIds.Contains(p.Id));
+            return Json(plant.PlantImages.Select(p=>p.Path));
+        }
     }
 }

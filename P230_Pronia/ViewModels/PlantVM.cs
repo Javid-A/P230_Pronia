@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using P230_Pronia.Entities;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -24,7 +25,8 @@ namespace P230_Pronia.ViewModels
         public IFormFile HoverPhoto { get; set; } = null!;
         [NotMapped]
         public ICollection<IFormFile> Images { get; set; } = null!;
-
+        public ICollection<PlantImage>? SpecificImages{ get; set; }
+        public ICollection<int>? ImageIds { get; set; }
 
     }
 }

@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="~/admin/assets/css/style.css">
     <!-- endinject -->
     <link rel="shortcut icon" href="images/favicon.png" />
+    @RenderSection("CSS",false)
 </head>
 <body>
     <div class="container-scroller">
@@ -290,7 +291,7 @@
     <script src="~/admin/assets/js/jquery.dataTables.js"></script>
     <script src="~/admin/assets/js/dataTables.bootstrap4.js"></script>
     <!-- End custom js for this page-->
-
+    @RenderSection("Scripts",false)
     <script src="~/admin/assets/js/jquery.cookie.js" type="text/javascript"></script>
 </body>
 
