@@ -16,11 +16,13 @@ namespace P230_Pronia.Entities
         public List<PlantImage> PlantImages { get; set; }
         public List<PlantCategory> PlantCategories { get; set; }
         public List<PlantTag> PlantTags { get; set; }
+        public List<PlantSizeColor> PlantSizeColors { get; set; }
         public Plant()
         {
             PlantImages = new();
             PlantCategories = new();
             PlantTags = new();
+            PlantSizeColors = new();
         }
 
     }

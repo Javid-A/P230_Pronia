@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.Differencing;
 using Microsoft.EntityFrameworkCore;
 using P230_Pronia.DAL;
 using P230_Pronia.Entities;
@@ -20,7 +21,10 @@ namespace P230_Pronia.Areas.ProniaAdmin.Controllers
         }
         public IActionResult Index()
         {
-            IEnumerable<Plant> model = _context.Plants.Include(p=>p.PlantImages).AsNoTracking().AsEnumerable();
+            IEnumerable<Plant> model = _context.Plants.Include(p=>p.PlantImages)
+                                                        .Include(p=>p.PlantSizeColors).ThenInclude(p=>p.Size)
+                                                        .Include(p=>p.PlantSizeColors).ThenInclude(p=>p.Color)
+                                                         .AsNoTracking().AsEnumerable();
             return View(model);
         }
 
@@ -78,6 +82,18 @@ namespace P230_Pronia.Areas.ProniaAdmin.Controllers
                 };
                 plant.PlantImages.Add(plantImage);
             }
+            string[] colorSizeQuantities = newPlant.ColorSizeQuantity.Split(',');
+            foreach (string colorSizeQuantity in colorSizeQuantities)
+            {
+                string[] datas = colorSizeQuantity.Split('-');
+                PlantSizeColor plantSizeColor = new()
+                {
+                    SizeId = int.Parse(datas[0]),
+                    ColorId = int.Parse(datas[1]),
+                    Quantity = int.Parse(datas[2])
+                };
+                plant.PlantSizeColors.Add(plantSizeColor);
+            }
             PlantImage main = new()
             {
                 IsMain = true,
@@ -116,42 +132,27 @@ namespace P230_Pronia.Areas.ProniaAdmin.Controllers
         public IActionResult Edit(int id)
         {
             if (id == 0) return BadRequest();
-            PlantVM? model = _context.Plants.Include(p => p.PlantCategories)
-                                            .Include(p => p.PlantTags)
-                                            .Include(p => p.PlantImages)
-                                    .Select(p =>
-                                    new PlantVM
-                                    {
-                                        Id = p.Id,
-                                        Name = p.Name,
-                                        SKU = p.SKU,
-                                        Desc = p.Desc,
-                                        Price = p.Price,
-                                        DiscountPrice = p.Price,
-                                        PlantDeliveryInformationId = p.PlantDeliveryInformationId,
-                                        CategoryIds = p.PlantCategories.Select(pc => pc.CategoryId).ToList(),
-                                        TagIds = p.PlantTags.Select(pc => pc.TagId).ToList(),
-                                        SpecificImages = p.PlantImages.Select(p => new PlantImage 
-                                        { 
-                                            Id = p.Id,
-                                            Path = p.Path,
-                                            IsMain = p.IsMain
-                                        }).ToList()
-                                    })
-                                    .FirstOrDefault(p => p.Id == id);
+            PlantVM? model = EditedPlant(id);
 
             ViewBag.Informations = _context.PlantDeliveryInformation.AsEnumerable();
             ViewBag.Categories = _context.Categories.AsEnumerable();
             ViewBag.Tags = _context.Tags.AsEnumerable();
             if (model is null) return BadRequest();
+            _context.SaveChanges();
             return View(model);
         }
 
         [HttpPost]
         public async Task<IActionResult> Edit(int id, PlantVM edited)
         {
+            ViewBag.Informations = _context.PlantDeliveryInformation.AsEnumerable();
+            ViewBag.Categories = _context.Categories.AsEnumerable();
+            ViewBag.Tags = _context.Tags.AsEnumerable();
+            PlantVM? model = EditedPlant(id);
+
             Plant? plant = await _context.Plants.Include(p => p.PlantImages).FirstOrDefaultAsync(p => p.Id == id);
             if (plant is null) return BadRequest();
+
             IEnumerable<string> removables = plant.PlantImages.Where(p => !edited.ImageIds.Contains(p.Id)).Select(i => i.Path).AsEnumerable();
             string imageFolderPath = Path.Combine(_env.WebRootPath, "assets", "images");
             foreach (string removable in removables)
@@ -160,9 +161,91 @@ namespace P230_Pronia.Areas.ProniaAdmin.Controllers
                 await Console.Out.WriteLineAsync(path);
                 Console.WriteLine(FileUpload.DeleteImage(path));
             }
-            return Json(removables);
+
+            //TODO  You have to control validation: FileType and FileLength
+            if(edited.MainPhoto is not null)
+            {
+               await AdjustPlantPhotos(edited.MainPhoto, plant, true);
+            }
+            else if (edited.HoverPhoto is not null){
+                await AdjustPlantPhotos(edited.HoverPhoto, plant, null);
+            }
+
             plant.PlantImages.RemoveAll(p => !edited.ImageIds.Contains(p.Id));
+            if(edited.Images is not null)
+            {
+                foreach (var item in edited.Images)
+                {
+                    if (!item.IsValidFile("image/") || !item.IsValidLength(1))
+                    {
+                        TempData["InvalidImages"] += item.FileName;
+                        continue;
+                    }
+                    PlantImage plantImage = new()
+                    {
+                        IsMain = false,
+                        Path = await item.CreateImage(imageFolderPath, "website-images")
+                    };
+                    plant.PlantImages.Add(plantImage);
+                }
+            }
+            plant.Name = edited.Name;
+            plant.Price = edited.Price;
+            plant.Desc = edited.Desc;
+            plant.SKU = edited.SKU;
+            _context.SaveChanges();
+            //TODO Edit Category and Tag IDs
             return Json(plant.PlantImages.Select(p=>p.Path));
+        }
+
+        private PlantVM? EditedPlant(int id)
+        {
+            PlantVM? model = _context.Plants.Include(p => p.PlantCategories)
+                                            .Include(p => p.PlantTags)
+                                            .Include(p => p.PlantImages)
+                                            .Select(p =>
+                                                new PlantVM
+                                                {
+                                                    Id = p.Id,
+                                                    Name = p.Name,
+                                                    SKU = p.SKU,
+                                                    Desc = p.Desc,
+                                                    Price = p.Price,
+                                                    DiscountPrice = p.Price,
+                                                    PlantDeliveryInformationId = p.PlantDeliveryInformationId,
+                                                    CategoryIds = p.PlantCategories.Select(pc => pc.CategoryId).ToList(),
+                                                    TagIds = p.PlantTags.Select(pc => pc.TagId).ToList(),
+                                                    SpecificImages = p.PlantImages.Select(p => new PlantImage
+                                                    {
+                                                        Id = p.Id,
+                                                        Path = p.Path,
+                                                        IsMain = p.IsMain
+                                                    }).ToList()
+                                                })
+                                                .FirstOrDefault(p => p.Id == id);
+            return model;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="image"></param>
+        /// <param name="plant"></param>
+        /// <param name="isMain">If IsMain attribute is true that is mean you want to change Main photo, if IsMain attribute is null that is mean you want to change HoverPhoto</param>
+        /// <returns></returns>
+        private async Task AdjustPlantPhotos(IFormFile image,Plant plant,bool? isMain)
+        {
+            string photoPath = plant.PlantImages.FirstOrDefault(p => p.IsMain == isMain).Path;
+            string imagesFolderPath = Path.Combine(_env.WebRootPath, "assets", "images");
+            string filePath = Path.Combine(imagesFolderPath, "website-images", photoPath);
+            FileUpload.DeleteImage(filePath);
+            plant.PlantImages.FirstOrDefault(p => p.IsMain == isMain).Path = await image.CreateImage(imagesFolderPath, "website-images");
+        }
+
+       
+        public IActionResult Search(string data)
+        {
+            List<Plant> plant = _context.Plants.Where(p => p.Name.Contains(data)).ToList();
+            return Json(plant);
         }
     }
 }

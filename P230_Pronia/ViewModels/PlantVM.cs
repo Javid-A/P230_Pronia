@@ -20,13 +20,14 @@ namespace P230_Pronia.ViewModels
         [NotMapped]
         public ICollection<int> TagIds { get; set; } = null!;
         [NotMapped]
-        public IFormFile MainPhoto { get; set; } = null!;
+        public IFormFile? MainPhoto { get; set; } = null!;
         [NotMapped]
-        public IFormFile HoverPhoto { get; set; } = null!;
+        public IFormFile? HoverPhoto { get; set; } = null!;
         [NotMapped]
-        public ICollection<IFormFile> Images { get; set; } = null!;
+        public ICollection<IFormFile>? Images { get; set; }
         public ICollection<PlantImage>? SpecificImages{ get; set; }
         public ICollection<int>? ImageIds { get; set; }
+        public string? ColorSizeQuantity { get; set; }
 
     }
 }

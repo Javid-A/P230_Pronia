@@ -29,19 +29,36 @@
 <hr />
 <div class="row">
     <div class="col-md-9">
-        <form asp-action="Edit">
+        <form asp-action="Edit" enctype="multipart/form-data">
             <div class="row images">
                 @foreach (var item in Model.SpecificImages)
                 {
                     <div class="image col-lg-3" style="position:relative">
                         <img style="width:150px;height:150px;object-fit:contain" class="@(item.IsMain == true ? "mainBorder" : "") @(item.IsMain == null ? "hoverBorder" : "")" src="~/assets/images/website-images/@item.Path">
                         <input type="hidden" name="ImageIds" value="@item.Id">
-                        <button class="closeBtn" type="button">X</button>
+                        @if(item.IsMain == false){
+                            <button class="closeBtn" type="button">X</button>
+                        }
                     </div>
                 }
             </div>
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            @*<input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="MainPhoto" class="control-label"></label>
+                <input asp-for="MainPhoto" class="form-control" />
+                <span asp-validation-for="MainPhoto" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="HoverPhoto" class="control-label"></label>
+                <input asp-for="HoverPhoto" class="form-control" />
+                <span asp-validation-for="HoverPhoto" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Images" class="control-label"></label>
+                <input asp-for="Images" class="form-control" />
+                <span asp-validation-for="Images" class="text-danger"></span>
+            </div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
@@ -120,7 +137,7 @@
                     }
                 </select>
                 <span asp-validation-for="TagIds" class="text-danger"></span>
-            </div>*@
+            </div>
 
 
             <div class="form-group">
