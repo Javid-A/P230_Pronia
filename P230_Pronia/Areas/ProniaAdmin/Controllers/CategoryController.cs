@@ -1,14 +1,17 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using P230_Pronia.DAL;
 using P230_Pronia.Entities;
 using P230_Pronia.Migrations;
+using P230_Pronia.Utilities.Roles;
 
 namespace P230_Pronia.Areas.ProniaAdmin.Controllers
 {
     [Area("ProniaAdmin")]
+    [Authorize(Roles = "Admin, Moderator")]
     public class CategoryController : Controller
     {
         private readonly ProniaDbContext _context;

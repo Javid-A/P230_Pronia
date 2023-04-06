@@ -20,10 +20,21 @@ namespace P230_Pronia.DAL
         public DbSet<Setting> Settings { get; set; }
         public DbSet<Color> Colors { get; set; }
         public DbSet<Size> Sizes { get; set; }
+        public DbSet<BasketItem> BasketItems { get; set; }
+        public DbSet<Basket> Baskets { get; set; }
+        public DbSet<Order> Orders { get; set; }
         public DbSet<PlantSizeColor> PlantSizeColors { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            foreach (var item in modelBuilder.Model
+                                .GetEntityTypes()
+                                        .SelectMany(e=>e.GetProperties()
+                                                    .Where(p=>p.ClrType == typeof(decimal) || p.ClrType == typeof(decimal?))))
+            {
+                item.SetColumnType("decimal(6,2)");
+            }
+
             modelBuilder.Entity<Setting>()
                 .HasIndex(s => s.Key)
                 .IsUnique();

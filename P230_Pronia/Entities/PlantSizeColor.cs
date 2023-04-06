@@ -9,5 +9,11 @@
         public Plant Plant { get; set; } = null!;
         public Color Color { get; set; } = null!;
         public Size Size { get; set; } = null!;
+        public ICollection<BasketItem>? BasketItems { get; set; }
+
+        public PlantSizeColor()
+        {
+            BasketItems = new List<BasketItem>();
+        }
     }
 }

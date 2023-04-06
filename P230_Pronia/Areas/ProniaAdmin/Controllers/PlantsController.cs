@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.Differencing;
 using Microsoft.EntityFrameworkCore;
 using P230_Pronia.DAL;
@@ -9,6 +10,7 @@ using P230_Pronia.ViewModels;
 namespace P230_Pronia.Areas.ProniaAdmin.Controllers
 {
     [Area("ProniaAdmin")]
+    [Authorize(Roles = "Admin, Moderator")]
     public class PlantsController : Controller
     {
         private readonly ProniaDbContext _context;

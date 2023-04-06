@@ -1,13 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using P230_Pronia.ViewModels;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace P230_Pronia.Entities
 {
     public class Plant:BaseEntity
     {
         public string Name { get; set; }
-        [Column(TypeName="decimal(6,2)")]
+        //[Column(TypeName="decimal(6,2)")]
         public decimal Price { get; set; }
-        [Column(TypeName="decimal(6,2)")]
+        //[Column(TypeName="decimal(6,2)")]
         public decimal? DiscountPrice { get; set; }
         public string SKU { get; set; }
         public string Desc { get; set; }
@@ -17,6 +18,8 @@ namespace P230_Pronia.Entities
         public List<PlantCategory> PlantCategories { get; set; }
         public List<PlantTag> PlantTags { get; set; }
         public List<PlantSizeColor> PlantSizeColors { get; set; }
+        [NotMapped]
+        public AddCartVM AddCart { get; set; }
         public Plant()
         {
             PlantImages = new();

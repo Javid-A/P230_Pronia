@@ -60,6 +60,8 @@ namespace P230_Pronia.Controllers
 
             if (plant is null) return NotFound();
 
+            ViewBag.Colors = _context.Colors.ToList();
+            ViewBag.Sizes = _context.Sizes.ToList();
             ViewBag.Relateds = RelatedPlants(plants, plant, id);
             return View(plant);
         }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using NuGet.ContentModel;
 using P230_Pronia.DAL;
 using P230_Pronia.Entities;
@@ -7,6 +8,7 @@ using P230_Pronia.Utilities.Extensions;
 namespace P230_Pronia.Areas.ProniaAdmin.Controllers
 {
     [Area("ProniaAdmin")]
+    [Authorize(Roles = "Admin, Moderator")]
     public class SliderController : Controller
     {
         private readonly ProniaDbContext _context;

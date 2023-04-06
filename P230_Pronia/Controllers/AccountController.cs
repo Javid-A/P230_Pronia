@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using P230_Pronia.Entities;
+using P230_Pronia.Utilities.Roles;
 using P230_Pronia.ViewModels;
 
 namespace P230_Pronia.Controllers
@@ -9,11 +10,13 @@ namespace P230_Pronia.Controllers
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public AccountController(UserManager<User> userManager,SignInManager<User> signInManager)
+        public AccountController(UserManager<User> userManager,SignInManager<User> signInManager,RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _roleManager = roleManager;
         }
         public IActionResult Register()
         {
@@ -40,6 +43,7 @@ namespace P230_Pronia.Controllers
                 }
                 return View();
             }
+            await _userManager.AddToRoleAsync(user,Roles.Member.ToString());
             return RedirectToAction("Index", "Home");
 
         }
@@ -54,6 +58,12 @@ namespace P230_Pronia.Controllers
             if (!ModelState.IsValid) return View();
 
             User user = await _userManager.FindByNameAsync(login.Username);
+            IList<string> roles = await _userManager.GetRolesAsync(user);
+            var roleResult = roles.FirstOrDefault(r => r == Roles.Admin.ToString() || r == Roles.Moderator.ToString());
+            if(roleResult is not null)
+            {
+                return View();
+            }
             if(user is null)
             {
                 ModelState.AddModelError("", "Username or password is incorrect");
@@ -84,5 +94,12 @@ namespace P230_Pronia.Controllers
         {
             return Json(User.Identity.IsAuthenticated);
         }
+
+        //public async Task CreateRoles()
+        //{
+        //    await _roleManager.CreateAsync(new IdentityRole(Roles.Admin.ToString()));
+        //    await _roleManager.CreateAsync(new IdentityRole(Roles.Moderator.ToString()));
+        //    await _roleManager.CreateAsync(new IdentityRole(Roles.Member.ToString()));
+        //}
     }
 }
