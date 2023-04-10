@@ -131,12 +131,15 @@
                         <form asp-controller="Order" asp-action="AddBasket" asp-route-plantId="@Model.Id" method="post">
                             <div class="selector-wrap color-option">
                                 <span class="selector-title border-bottom-0">Color</span>
-                                <select asp-for="AddCart.ColorId" asp-items="@(new SelectList(ViewBag.Colors,"Id","Name"))" class="nice-select wide border-bottom-0 rounded-0"></select>
+                                <select asp-for="AddCart.ColorId" asp-items="@(new SelectList(ViewBag.Colors,"Id","Name"))" class="nice-select wide border-bottom-0 rounded-0">
+                                    <option value="0">Choose color</option>
+                                </select>
                             </div>
                             <div class="selector-wrap size-option">
                                 <span class="selector-title">Size</span>
-                                <select asp-for="AddCart.SizeId" asp-items="@(new SelectList(ViewBag.Sizes,"Id","Name"))" class="nice-select wide rounded-0"></select>
-                               
+                                <select asp-for="AddCart.SizeId" data-callId="sizeId" class="nice-select wide rounded-0">
+                                </select>
+
                             </div>
                             <p class="short-desc">
                                 @Model.Desc
@@ -150,8 +153,8 @@
                                     </div>
                                 </li>
                                 <li class="add-to-cart">
-                                   @* <a class="btn btn-custom-size lg-size btn-pronia-primary"
-                                       asp-controller="Plant" asp-action="AddBasket" asp-route-id="@Model.Id">Add to cart</a>*@
+                                    @* <a class="btn btn-custom-size lg-size btn-pronia-primary"
+                                    asp-controller="Plant" asp-action="AddBasket" asp-route-id="@Model.Id">Add to cart</a>*@
                                     <button class="btn btn-custom-size lg-size btn-pronia-primary" type="submit">Add to cart</button>
                                 </li>
                                 <li class="wishlist-btn-wrap">
@@ -503,3 +506,45 @@
     <!-- Product Area End Here -->
 </main>
 <!-- Main Content Area End Here  -->
+@section Scripts{
+    <script>
+        const selects = document.querySelectorAll(".color-option .list li");
+        let sizeSelects;
+
+        selects.forEach(s => {
+            s.addEventListener("click", function () {
+                let sizes = document.querySelector(".size-option .list")
+                sizes.innerHTML = ""
+                let colorId = s.getAttribute("data-value");
+                var url = `/Order/GetSizes?plantId=${@Model.Id}&colorId=${colorId}`;
+                fetch(url).then(response => response.json()).then(datas => {
+                    if (datas.status !== 404) {
+                        datas.forEach(data => {
+                            console.log(data)
+                            let li = document.createElement("li");
+                            li.className = "option"
+                            li.setAttribute("data-value", data.id)
+                            li.innerText = data.name;
+                            sizes.append(li)
+                        })
+                        sizeSelects = document.querySelectorAll(".size-option .list li")
+                        sizeSelects.forEach(size => {
+                            size.addEventListener("click", function () {
+                                let mainSize = document.querySelector("[data-callId='sizeId']")
+                                let option = document.createElement("option");
+                                option.value = size.getAttribute("data-value");
+                                option.innerText = size.innerText;
+                                option.setAttribute("selected","selected")
+                                console.log(mainSize)
+                                mainSize.append(option);
+                            })
+                        })
+                    }
+                });
+            })
+        })
+        if (sizeSelects) {
+
+        }
+    </script>
+}

@@ -59,11 +59,11 @@ namespace P230_Pronia.Controllers
 
             User user = await _userManager.FindByNameAsync(login.Username);
             IList<string> roles = await _userManager.GetRolesAsync(user);
-            var roleResult = roles.FirstOrDefault(r => r == Roles.Admin.ToString() || r == Roles.Moderator.ToString());
-            if(roleResult is not null)
-            {
-                return View();
-            }
+            //var roleResult = roles.FirstOrDefault(r => r == Roles.Admin.ToString() || r == Roles.Moderator.ToString());
+            //if(roleResult is not null)
+            //{
+            //    return View();
+            //}
             if(user is null)
             {
                 ModelState.AddModelError("", "Username or password is incorrect");

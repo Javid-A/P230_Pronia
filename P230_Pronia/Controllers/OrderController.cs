@@ -23,28 +23,41 @@ namespace P230_Pronia.Controllers
         [HttpPost]
         public async Task<IActionResult> AddBasket(int plantId, Plant basketPlant)
         {
-            //return Json(plant.AddCart);
             if (User.Identity.IsAuthenticated)
             {
-                PlantSizeColor? plant = _context.PlantSizeColors.FirstOrDefault(p => p.Id == plantId);
+                PlantSizeColor? plant = _context.PlantSizeColors.Include(p=>p.Plant).FirstOrDefault(p => p.PlantId == plantId && p.SizeId == basketPlant.AddCart.SizeId && p.ColorId == basketPlant.AddCart.ColorId);
                 if (plant is null) return NotFound();
 
                 User user = await _userManager.FindByNameAsync(User.Identity.Name);
                 Basket? userActiveBasket = _context.Baskets
                                                 .Include(b => b.User)
                                                    .FirstOrDefault(b => b.User.Id == user.Id && !b.IsOrdered) ?? new Basket();
-                //BasketItem item = new BasketItem
-                //{
-                //    PlantSizeColorId = plant.Id,
-                    //SizeId = basketPlant.AddCart.SizeId
 
-                //}
-                //userActiveBasket.BasketItems.Add()
-
-
-                await Console.Out.WriteLineAsync(user.Baskets.Count.ToString());
+                BasketItem item = new()
+                {
+                    PlantSizeColorId = plant.Id,
+                    SaleQuantity = basketPlant.AddCart.Quantity,
+                    UnitPrice = plant.Plant.Price
+                };
+                userActiveBasket.BasketItems.Add(item);
+                userActiveBasket.User = user;
+                userActiveBasket.TotalPrice = userActiveBasket.BasketItems.Sum(p => p.SaleQuantity * p.UnitPrice);
+                _context.Baskets.Add(userActiveBasket);
+                _context.SaveChanges();
+                 return RedirectToAction("Index", "Home");
             }
-            return RedirectToAction("Index", "Home");
+            else
+            {
+                return RedirectToAction("Login", "Account");
+            }
+        }
+
+        public IActionResult GetSizes(int plantId,int colorId)
+        {
+            List<PlantSizeColor> plantSizeColor = _context.PlantSizeColors.Include(p=>p.Size).Where(p => p.PlantId == plantId && p.ColorId == colorId).ToList();
+            if (plantSizeColor is null) return Json(new { status = 404 });
+            var sizes = plantSizeColor.Select(p => new { Id = p.SizeId, Name = p.Size.Name }).ToList();
+            return Json(sizes);
         }
     }
 }
