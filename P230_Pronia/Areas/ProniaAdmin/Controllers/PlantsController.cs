@@ -10,7 +10,7 @@ using P230_Pronia.ViewModels;
 namespace P230_Pronia.Areas.ProniaAdmin.Controllers
 {
     [Area("ProniaAdmin")]
-    [Authorize(Roles = "Admin, Moderator")]
+    //[Authorize(Roles = "Admin, Moderator")]
     public class PlantsController : Controller
     {
         private readonly ProniaDbContext _context;
@@ -21,12 +21,15 @@ namespace P230_Pronia.Areas.ProniaAdmin.Controllers
             _context = context;
             _env = env;
         }
-        public IActionResult Index()
+        public IActionResult Index(int page=1)
         {
+            ViewBag.TotalPage = Math.Ceiling((double)_context.Plants.Count() / 4);
+            ViewBag.CurrentPage = page;
+
             IEnumerable<Plant> model = _context.Plants.Include(p=>p.PlantImages)
                                                         .Include(p=>p.PlantSizeColors).ThenInclude(p=>p.Size)
                                                         .Include(p=>p.PlantSizeColors).ThenInclude(p=>p.Color)
-                                                         .AsNoTracking().AsEnumerable();
+                                                         .AsNoTracking().Skip((page-1) *4).Take(4).AsEnumerable();
             return View(model);
         }
 

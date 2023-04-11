@@ -54,9 +54,10 @@ namespace P230_Pronia.Controllers
 
         public IActionResult GetSizes(int plantId,int colorId)
         {
-            List<PlantSizeColor> plantSizeColor = _context.PlantSizeColors.Include(p=>p.Size).Where(p => p.PlantId == plantId && p.ColorId == colorId).ToList();
+            List<PlantSizeColor> plantSizeColor = _context.PlantSizeColors
+                                                       .Include(p=>p.Size).Where(p => p.PlantId == plantId && p.ColorId == colorId).ToList();
             if (plantSizeColor is null) return Json(new { status = 404 });
-            var sizes = plantSizeColor.Select(p => new { Id = p.SizeId, Name = p.Size.Name }).ToList();
+            var sizes = plantSizeColor.Select(p => new { Id = p.SizeId, p.Size.Name }).ToList();
             return Json(sizes);
         }
     }

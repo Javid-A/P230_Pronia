@@ -176,7 +176,7 @@ namespace P230_Pronia.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Baskets");
+                    b.ToTable("Baskets", (string)null);
                 });
 
             modelBuilder.Entity("P230_Pronia.Entities.BasketItem", b =>
@@ -205,7 +205,7 @@ namespace P230_Pronia.Migrations
 
                     b.HasIndex("PlantSizeColorId");
 
-                    b.ToTable("BasketItems");
+                    b.ToTable("BasketItems", (string)null);
                 });
 
             modelBuilder.Entity("P230_Pronia.Entities.Category", b =>
@@ -226,7 +226,7 @@ namespace P230_Pronia.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("P230_Pronia.Entities.Color", b =>
@@ -243,7 +243,7 @@ namespace P230_Pronia.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Colors");
+                    b.ToTable("Colors", (string)null);
                 });
 
             modelBuilder.Entity("P230_Pronia.Entities.Order", b =>
@@ -271,7 +271,7 @@ namespace P230_Pronia.Migrations
                     b.HasIndex("BasketId")
                         .IsUnique();
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", (string)null);
                 });
 
             modelBuilder.Entity("P230_Pronia.Entities.Plant", b =>
@@ -307,7 +307,7 @@ namespace P230_Pronia.Migrations
 
                     b.HasIndex("PlantDeliveryInformationId");
 
-                    b.ToTable("Plants");
+                    b.ToTable("Plants", (string)null);
                 });
 
             modelBuilder.Entity("P230_Pronia.Entities.PlantCategory", b =>
@@ -330,7 +330,7 @@ namespace P230_Pronia.Migrations
 
                     b.HasIndex("PlantId");
 
-                    b.ToTable("PlantCategory");
+                    b.ToTable("PlantCategory", (string)null);
                 });
 
             modelBuilder.Entity("P230_Pronia.Entities.PlantDeliveryInformation", b =>
@@ -355,7 +355,7 @@ namespace P230_Pronia.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("PlantDeliveryInformation");
+                    b.ToTable("PlantDeliveryInformation", (string)null);
                 });
 
             modelBuilder.Entity("P230_Pronia.Entities.PlantImage", b =>
@@ -380,7 +380,7 @@ namespace P230_Pronia.Migrations
 
                     b.HasIndex("PlantId");
 
-                    b.ToTable("PlantImages");
+                    b.ToTable("PlantImages", (string)null);
                 });
 
             modelBuilder.Entity("P230_Pronia.Entities.PlantSizeColor", b =>
@@ -411,7 +411,7 @@ namespace P230_Pronia.Migrations
 
                     b.HasIndex("SizeId");
 
-                    b.ToTable("PlantSizeColors");
+                    b.ToTable("PlantSizeColors", (string)null);
                 });
 
             modelBuilder.Entity("P230_Pronia.Entities.PlantTag", b =>
@@ -434,7 +434,7 @@ namespace P230_Pronia.Migrations
 
                     b.HasIndex("TagId");
 
-                    b.ToTable("PlantTag");
+                    b.ToTable("PlantTag", (string)null);
                 });
 
             modelBuilder.Entity("P230_Pronia.Entities.Setting", b =>
@@ -458,7 +458,7 @@ namespace P230_Pronia.Migrations
                     b.HasIndex("Key")
                         .IsUnique();
 
-                    b.ToTable("Settings");
+                    b.ToTable("Settings", (string)null);
                 });
 
             modelBuilder.Entity("P230_Pronia.Entities.Size", b =>
@@ -475,7 +475,7 @@ namespace P230_Pronia.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Sizes");
+                    b.ToTable("Sizes", (string)null);
                 });
 
             modelBuilder.Entity("P230_Pronia.Entities.Slider", b =>
@@ -514,7 +514,7 @@ namespace P230_Pronia.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Sliders");
+                    b.ToTable("Sliders", (string)null);
                 });
 
             modelBuilder.Entity("P230_Pronia.Entities.Tag", b =>
@@ -531,7 +531,7 @@ namespace P230_Pronia.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tags");
+                    b.ToTable("Tags", (string)null);
                 });
 
             modelBuilder.Entity("P230_Pronia.Entities.User", b =>
